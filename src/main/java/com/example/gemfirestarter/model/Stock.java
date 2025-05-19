@@ -5,44 +5,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.gemfire.mapping.annotation.Region;
+import org.springframework.data.redis.core.RedisHash;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor 
 @AllArgsConstructor
-@Region("stocks")
+@RedisHash("stocks")
 public class Stock implements Serializable {
 
-    @Id
-    private String symbol;
-
-    @NotBlank
-    private String companyName;
-
-    @NotNull
-    @Positive
-    private BigDecimal currentPrice;
-
-    @Positive
-    private BigDecimal dailyHigh;
-
-    @Positive
-    private BigDecimal dailyLow;
-
-    @Positive
-    private Long volume;
-
-    @Positive
-    private BigDecimal marketCap;
-
-    @NotNull
-    private LocalDateTime lastUpdated;
+@Id
+private Long id;
+private String symbol;
+private Double price;
+private Long quantity;
 }
