@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.gemfire.mapping.annotation.Region;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,31 +17,34 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Region("stocks")
+@RedisHash("stocks")
 public class Stock implements Serializable {
-
+    
+    private static final long serialVersionUID = 1L;
+    
     @Id
     private String symbol;
-
-    @NotBlank
+    
     private String companyName;
-
-    @NotNull
-    @Positive
+    
     private BigDecimal currentPrice;
-
-    @Positive
-    private BigDecimal dailyHigh;
-
-    @Positive
-    private BigDecimal dailyLow;
-
-    @Positive
-    private Long volume;
-
-    @Positive
-    private BigDecimal marketCap;
-
-    @NotNull
+    
+    @Indexed
+    private String sector;
+    
     private LocalDateTime lastUpdated;
+    
+    private BigDecimal dailyHigh;
+    
+    private BigDecimal dailyLow;
+    
+    public Stock(String symbol, String companyName, BigDecimal currentPrice, String sector) {
+        this.symbol = symbol;
+        this.companyName = companyName;
+        this.currentPrice = currentPrice;
+        this.sector = sector;
+        this.lastUpdated = LocalDateTime.now();
+        this.dailyHigh = currentPrice;
+        this.dailyLow = currentPrice;
+    }
 }

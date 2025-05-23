@@ -1,22 +1,37 @@
 package com.example.gemfirestarter.repository;
 
 import com.example.gemfirestarter.model.Portfolio;
-import org.springframework.data.gemfire.repository.GemfireRepository;
-import org.springframework.data.gemfire.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Repository interface for Portfolio entities
+ * Uses Spring Data Redis for data access
+ */
 @Repository
-public interface PortfolioRepository extends GemfireRepository<Portfolio, String> {
-
-    @Query("SELECT * FROM /portfolios p WHERE p.totalValue >= $1")
-    List<Portfolio> findByTotalValueGreaterThanEqual(BigDecimal minValue);
+public interface PortfolioRepository extends CrudRepository<Portfolio, String> {
     
-    @Query("SELECT * FROM /portfolios p ORDER BY p.totalValue DESC LIMIT 10")
-    List<Portfolio> findTop10ByOrderByTotalValueDesc();
+    /**
+     * Find portfolios by user ID
+     */
+    List<Portfolio> findByUserId(String userId);
     
-    @Query("SELECT * FROM /portfolios p WHERE p.holdings.stockSymbol = $1")
-    List<Portfolio> findByHoldingsStockSymbol(String stockSymbol);
+    /**
+     * Find portfolios with total value greater than specified amount
+     */
+    List<Portfolio> findByTotalValueGreaterThan(BigDecimal value);
+    
+    /**
+     * Find portfolios with total value less than specified amount
+     */
+    List<Portfolio> findByTotalValueLessThan(BigDecimal value);
+    
+    /**
+     * Find portfolios by user ID and with total value in specified range
+     */
+    List<Portfolio> findByUserIdAndTotalValueBetween(
+            String userId, BigDecimal minValue, BigDecimal maxValue);
 }

@@ -1,28 +1,37 @@
 package com.example.gemfirestarter.repository;
 
 import com.example.gemfirestarter.model.Stock;
-import org.springframework.data.gemfire.repository.GemfireRepository;
-import org.springframework.data.gemfire.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Repository interface for Stock entities
+ * Uses Spring Data Redis for data access
+ */
 @Repository
-public interface StockRepository extends GemfireRepository<Stock, String> {
-
-    @Query("SELECT * FROM /stocks s WHERE s.companyName LIKE $1")
-    List<Stock> findByCompanyNameLike(String companyNamePattern);
+public interface StockRepository extends CrudRepository<Stock, String> {
     
-    @Query("SELECT * FROM /stocks s WHERE s.currentPrice <= $1")
-    List<Stock> findByCurrentPriceLessThanEqual(BigDecimal maxPrice);
+    /**
+     * Find stocks by sector
+     */
+    List<Stock> findBySector(String sector);
     
-    @Query("SELECT * FROM /stocks s WHERE s.currentPrice >= $1")
-    List<Stock> findByCurrentPriceGreaterThanEqual(BigDecimal minPrice);
+    /**
+     * Find stocks where current price is greater than specified amount
+     */
+    List<Stock> findByCurrentPriceGreaterThan(BigDecimal price);
     
-    @Query("SELECT * FROM /stocks s WHERE s.currentPrice >= $1 AND s.currentPrice <= $2")
-    List<Stock> findByCurrentPriceBetween(BigDecimal minPrice, BigDecimal maxPrice);
+    /**
+     * Find stocks where current price is less than specified amount
+     */
+    List<Stock> findByCurrentPriceLessThan(BigDecimal price);
     
-    @Query("SELECT * FROM /stocks s ORDER BY s.volume DESC LIMIT 10")
-    List<Stock> findTop10ByOrderByVolumeDesc();
+    /**
+     * Find stocks by sector and price range
+     */
+    List<Stock> findBySectorAndCurrentPriceBetween(
+            String sector, BigDecimal minPrice, BigDecimal maxPrice);
 }

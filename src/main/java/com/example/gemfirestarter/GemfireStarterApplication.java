@@ -2,12 +2,13 @@ package com.example.gemfirestarter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
-public class GemfireStarterApplication {
+@EnableCaching
+public class RedisStarterApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GemfireStarterApplication.class, args);
+        SpringApplication.run(RedisStarterApplication.class, args);
     }
-
 }

@@ -1,27 +1,47 @@
 package com.example.gemfirestarter.repository;
 
 import com.example.gemfirestarter.model.TradeTransaction;
-import org.springframework.data.gemfire.repository.GemfireRepository;
-import org.springframework.data.gemfire.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Repository interface for TradeTransaction entities
+ * Uses Spring Data Redis for data access
+ */
 @Repository
-public interface TradeTransactionRepository extends GemfireRepository<TradeTransaction, String> {
-
-    List<TradeTransaction> findByUserId(String userId);
+public interface TradeTransactionRepository extends CrudRepository<TradeTransaction, String> {
     
-    List<TradeTransaction> findByStockSymbol(String stockSymbol);
+    /**
+     * Find trades by portfolio ID
+     */
+    List<TradeTransaction> findByPortfolioId(String portfolioId);
     
-    List<TradeTransaction> findByUserIdAndStockSymbol(String userId, String stockSymbol);
+    /**
+     * Find trades by symbol
+     */
+    List<TradeTransaction> findBySymbol(String symbol);
     
-    List<TradeTransaction> findByStatus(TradeTransaction.TradeStatus status);
+    /**
+     * Find trades by type (BUY or SELL)
+     */
+    List<TradeTransaction> findByType(String type);
     
-    @Query("SELECT * FROM /trades t WHERE t.userId = $1 AND t.timestamp >= $2 AND t.timestamp <= $3")
-    List<TradeTransaction> findByUserIdAndTimestampBetween(String userId, LocalDateTime startDate, LocalDateTime endDate);
+    /**
+     * Find trades by portfolio ID and type
+     */
+    List<TradeTransaction> findByPortfolioIdAndType(String portfolioId, String type);
     
-    @Query("SELECT * FROM /trades t WHERE t.stockSymbol = $1 AND t.status = 'PENDING'")
-    List<TradeTransaction> findPendingTradesByStockSymbol(String stockSymbol);
+    /**
+     * Find trades by timestamp range
+     */
+    List<TradeTransaction> findByTimestampBetween(LocalDateTime startTime, LocalDateTime endTime);
+    
+    /**
+     * Find trades by portfolio ID and timestamp range
+     */
+    List<TradeTransaction> findByPortfolioIdAndTimestampBetween(
+            String portfolioId, LocalDateTime startTime, LocalDateTime endTime);
 }
